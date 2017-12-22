@@ -1,5 +1,5 @@
 #All the things related to meme generation, might have to split this up
-#If I'm going to be fucking networking I need a logger service too
+#If I'm going to be networking I need a logger service too
 import requests
 from bs4 import BeautifulSoup
 import webbrowser
@@ -22,7 +22,7 @@ def picURLParser(URL):
     pageData = soup.find(id="permalink-overlay")
     picData = pageData.find(class_="AdaptiveMediaOuterContainer")
     link = picData.find('img')
-    URL = link.attrs['src'] #getting the wrong picture, gotta think about this some more
+    URL = link.attrs['src'] 
     return URL
 
 #Going to need a method that takes in a top string, bottom string, and image source, and passes them off to the meme maker. Might save
@@ -44,7 +44,7 @@ def memeMaker(topString,bottomString,URL):
         localFile.close()
         #webbrowser.close()
     except:
-        print("something fucked up, write a logger you bum")
+        print("Unknown exception hit, make a logger service")
 
 #Method to split text into top and bottom meme? I don't know if its even worth the effort, maybe just for fun
 def textSplitter(text):
@@ -53,20 +53,19 @@ def textSplitter(text):
     #I'm sure there's a better way to do this but this'll work. This way we know we're always getting whole words
     firstString = ""
     secondString = ""
-    #round up or down?
     for x in range(0, int(length/2)):
         firstString += stringList[x] + " "
     for x in range(int(length/2), length):
         secondString += stringList[x] + " "
     splitString = [firstString,secondString]
     return splitString
-#Need to strip text of anything and everything wacky, going to be a pain in the ass
+#Need to strip text of anything and everything wacky
 def formatText(text):
     returnText = re.sub(r"http\S+", "", text)
     lazyBoi = re.sub(r"pic.twitter.com","",returnText)
     #re.sub(r'\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*(?:(?:\/[^\s/]*))*', '', text)
     return lazyBoi
-#Main test stuff, this should be on top come on python why you gotta enforce ordering
+
 def makeMemes(tweets, PicURLs):
     i = 0
     for tweet in tweets:

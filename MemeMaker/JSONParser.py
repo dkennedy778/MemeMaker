@@ -61,5 +61,4 @@ def parseMemes(filename):
 # #Want to limit the number of sentences, or maybe the amount of text. For now we'll just limit ourselves to two sentences
 # #also going to want an image somewhere in the picture, that's a bit tougher. Will start by looking for image extensions or tags from sites like imgur
 # #Only looking for successful memes, so we're limiting ourselves to at least 20 retweets. Not sure exactly what's the sweet number here
-# #but I'm going to prioritize propensity to share content over plain "likes".
 # names.clear()

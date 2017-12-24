@@ -42,7 +42,7 @@ def parseMemes(filename):
                 s = str(dataPoint["text"])
                 if(detect(s) == 'en'):
                     memeWorthy = len(s.split())  # splitting on whitespace
-                    if memeWorthy < 25: #does order impose performance cost?
+                    if memeWorthy < 25 and memeWorthy > 4: 
                         if any(substring in s for substring in substring_list): #https://stackoverflow.com/questions/8122079/python-how-to-check-a-string-for-substrings-from-a-list
                             #loops through all URLs in the tweet until it finds the image one
                             urls = extractor.find_urls(s)

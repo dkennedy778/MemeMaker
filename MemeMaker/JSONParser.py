@@ -60,4 +60,7 @@ def parseMemes(filename):
     #This is ok but we're still going to end up with a ton of trash. Could bounce over to the URL and use twitter's API to parse the comments
     #for reactions like "hahaha", "meme", "laughing emoji" or "lmao dead" or something. Then we queue each tweet by the chance its something
     #we can make into a meme, and give that to the maker first
+    
+    #Also considering dumping any tweets that contain @,#,_, or other associated symbols. Limited sampling shows that tweets containing these characters
+    #make for poor memes 
 

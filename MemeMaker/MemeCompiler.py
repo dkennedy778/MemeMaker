@@ -1,4 +1,5 @@
-#All the things related to meme generation
+#All the things related to meme generation, might have to split this up
+#If I'm going to be fucking networking I need a logger service too
 import requests
 from bs4 import BeautifulSoup
 import webbrowser
@@ -6,6 +7,7 @@ import urllib.request
 import re
 import logging
 
+#don't parse html with REGEX! https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags
 
 MemeCompiler_logger = logging.getLogger('memeMaker')
 
@@ -22,15 +24,21 @@ def picURLParser(URL):
     URL = link.attrs['src']
     return URL
 
+#Going to need a method that takes in a top string, bottom string, and image source, and passes them off to the meme maker. Might save
+#this image programatically, no clue how to do that
+
 #Documented issues with memeMaker
-#1. some picture URLs are passing in more than just pic.twitter links. Need to parse the pic.twitter links out of this instead of just statically checking the first three chars of the passed URL. Probably affecting 40%(!) of the input
-#2. MemeGen really doesn't play well with chinese characters or emojis. Generally just won't display them, arguable that these should just be excluded from the pool.
-#3. 'https://memegen.link/custom/"Can you hear our song?" Some drawing based /off Calamari Inkantation, I hope you like it! /j8ZMAozgDd .jpg?alt=https://pbs.twimg.com/media/DRXXxEmX0AECbnB.jpg'
+#1. MemeGen really doesn't play well with chinese characters or emojis. Generally just won't display them, arguable that these should just be excluded from the pool.
+
+#2. 'https://memegen.link/custom/"Can you hear our song?" Some drawing based /off Calamari Inkantation, I hope you like it! /j8ZMAozgDd .jpg?alt=https://pbs.twimg.com/media/DRXXxEmX0AECbnB.jpg'
 # This string realllyyy messed the parser up, tried to create a new meme for every single word in the sentence after song. Removing the question mark fixed it, seems like it functions as an escape character or something
+
+#3. Seems like some tweets with videos are being passed through. Not really an issue since they just hit an exception but might be worth parsing out to save time later. At first glance picture and video links look identical,
+#so if there's no easy way to do this I'll just let the encompassing try catch handle them
 
 def memeMaker(topString,bottomString,URL):
     try:
-        #Testing to see if the URL is a twitter pic, see issue #1
+        # going to start by opening firefox, but eventually I want all this automated
         parseMeBB = URL[0] + URL[1] + URL[2]
         #Removing tweets which are just images, likely superflorus after changes to JSONParser, test this
         if (topString == "" or bottomString == ""):
@@ -73,7 +81,7 @@ def formatText(text):
     lazyBoi = re.sub(r"pic.twitter.com","",returnText)
     #re.sub(r'\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*(?:(?:\/[^\s/]*))*', '', text)
     return lazyBoi
-#Main test stuff
+#Main test stuff, this should be on top come on python why you gotta enforce ordering
 def makeMemes(tweets, PicURLs):
     try:
         i = 0

@@ -6,7 +6,7 @@ My input files were generated using taspinar's twitterscraper, any input files s
 
 This is a very early prototype, expect to find bugs, abherrent behavior, half finished features, and inexplicable design decisions.
 
-Top level overview
+<b>Top level overview</b>
 
 The master memeMaker class instantiates the global logger, runs the JSON parser, and passes the parsed texts onto the makesMemes method. Note that you need to have a collection of unparsed tweets to run the program, sampleData.JSON is mine. This sample is too small to provide more than a few representative tweets. If you'd like to do a test run I've uploaded a larger sample file [here](https://drive.google.com/file/d/1SpggnFuU9O_kZJXX-MH0_I0Va_kKreGQ/view?usp=sharing).  
 

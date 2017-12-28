@@ -7,7 +7,6 @@ import urllib.request
 import re
 import logging
 
-#don't parse html with REGEX! https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags
 
 MemeCompiler_logger = logging.getLogger('memeMaker')
 
@@ -66,13 +65,13 @@ def textSplitter(text):
         secondString += stringList[x] + " "
     splitString = [firstString,secondString]
     return splitString
-#Need to strip text of anything and everything wacky, going to be a pain in the ass
+#Need to strip text of anything and everything wacky, going to be a pain in the butt
 def formatText(text):
     returnText = re.sub(r"http\S+", "", text)
     lazyBoi = re.sub(r"pic.twitter.com","",returnText)
     #re.sub(r'\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*(?:(?:\/[^\s/]*))*', '', text)
     return lazyBoi
-#Main test stuff, this should be on top come on python why you gotta enforce ordering
+#Main test stuff
 def makeMemes(tweets, PicURLs):
     try:
         i = 0

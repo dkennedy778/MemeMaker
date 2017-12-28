@@ -1,5 +1,4 @@
-#All the things related to meme generation, might have to split this up
-#If I'm going to be fucking networking I need a logger service too
+#All the things related to meme generation
 import requests
 from bs4 import BeautifulSoup
 import webbrowser
@@ -20,15 +19,18 @@ def picURLParser(URL):
     pageData = soup.find(id="permalink-overlay")
     picData = pageData.find(class_="AdaptiveMediaOuterContainer")
     link = picData.find('img')
-    URL = link.attrs['src'] #getting the wrong picture, gotta think about this some more
+    URL = link.attrs['src']
     return URL
 
-#Going to need a method that takes in a top string, bottom string, and image source, and passes them off to the meme maker. Might save
-#this image programatically, no clue how to do that
+#Documented issues with memeMaker
+#1. some picture URLs are passing in more than just pic.twitter links. Need to parse the pic.twitter links out of this instead of just statically checking the first three chars of the passed URL. Probably affecting 40%(!) of the input
+#2. MemeGen really doesn't play well with chinese characters or emojis. Generally just won't display them, arguable that these should just be excluded from the pool.
+#3. 'https://memegen.link/custom/"Can you hear our song?" Some drawing based /off Calamari Inkantation, I hope you like it! /j8ZMAozgDd .jpg?alt=https://pbs.twimg.com/media/DRXXxEmX0AECbnB.jpg'
+# This string realllyyy messed the parser up, tried to create a new meme for every single word in the sentence after song. Removing the question mark fixed it, seems like it functions as an escape character or something
 
 def memeMaker(topString,bottomString,URL):
     try:
-        # going to start by opening firefox, but eventually I want all this automated
+        #Testing to see if the URL is a twitter pic, see issue #1
         parseMeBB = URL[0] + URL[1] + URL[2]
         #Removing tweets which are just images, likely superflorus after changes to JSONParser, test this
         if (topString == "" or bottomString == ""):
@@ -65,7 +67,7 @@ def textSplitter(text):
         secondString += stringList[x] + " "
     splitString = [firstString,secondString]
     return splitString
-#Need to strip text of anything and everything wacky, going to be a pain in the butt
+#Need to strip text of anything and everything wacky, going to be a pain in the ass
 def formatText(text):
     returnText = re.sub(r"http\S+", "", text)
     lazyBoi = re.sub(r"pic.twitter.com","",returnText)
@@ -79,7 +81,6 @@ def makeMemes(tweets, PicURLs):
             text = tweet["text"]
             formattedText = formatText(text)
             splitFormattedText = textSplitter(formattedText)
-            picURL = PicURLs[i]
             memeMaker(splitFormattedText[0], splitFormattedText[1], PicURLs[i])
             i = i +1 #python why
     except Exception as e:

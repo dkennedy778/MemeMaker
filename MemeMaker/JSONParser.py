@@ -18,10 +18,13 @@ def parseMemes(filename):
     memeTweets = []
     pprint("start")
     extractor = URLExtract()
+    #Evaluating tweets on the following criteria 
+    #1. The tweet has more than 20 retweets
+    #2. The tweet has more than 4 words and less than 25
+    #3. The tweet has some kind of image URL
+    #4. The tweet is in english
     try:
         for dataPoint in data:
-    #Well for starters how do we count the number of sentences? ("..." is going to fuck up a split)
-    #Start by just counting words, that probably matters more anyway. Might want to remove any non-consecutive periods anyway
             if int(dataPoint["retweets"])> 20:
                 s = str(dataPoint["text"])
                 if(detect(s) == 'en'):
@@ -30,11 +33,14 @@ def parseMemes(filename):
                         if any(substring in s for substring in substring_list): #https://stackoverflow.com/questions/8122079/python-how-to-check-a-string-for-substrings-from-a-list
                             #loops through all URLs in the tweet until it finds the image one
                             urls = extractor.find_urls(s)
-                            #HACK SOLUTION, need to alter a datastructure to allow for tweets that have 2+ applicable URLs. This just includes the first
+                            #HACK SOLUTION, need to alter a datastructure to allow for tweets that have 2+ picture URLs. This just includes the first
                             if urls: #poorly formatted tweets
                                 for url in urls:
-                                    if any(substring in url for substring in substring_list): #this is a gross decision tree, clean it up sometime
-                                        picURLs.append(url)
+                                    if any(substring in url for substring in substring_list):
+                                        #splitting the string to get ride of cases where the URL is more than just the pic.twitter link, probably should be doing this with regular expressions but whatever
+                                        memeURLList = str(url).split("pic")
+                                        picURL = "pic" + memeURLList[1]
+                                        picURLs.append(picURL)
                                         memeTweets.append(dataPoint)
                                         break
                     #pprint(dataPoint)
@@ -45,7 +51,9 @@ def parseMemes(filename):
     #for reactions like "hahaha", "meme", "laughing emoji" or "lmao dead" or something. Then we queue each tweet by the chance its something
     #we can make into a meme, and give that to the maker first
 
-#Sample parsing methods
+
+#Other sample parsing methods
+
 #first lets get the names of all users
 #names = []
     # for dataPoint in data:
@@ -57,8 +65,4 @@ def parseMemes(filename):
 #     if likes > 20:
 #         names.append(dataPoint["user"])
 #         #pprint(dataPoint) #I'm lazy
-# #Ok, lets try figuring out what we'd want for a meme
-# #Want to limit the number of sentences, or maybe the amount of text. For now we'll just limit ourselves to two sentences
-# #also going to want an image somewhere in the picture, that's a bit tougher. Will start by looking for image extensions or tags from sites like imgur
-# #Only looking for successful memes, so we're limiting ourselves to at least 20 retweets. Not sure exactly what's the sweet number here
-# names.clear()
+

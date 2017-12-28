@@ -11,7 +11,7 @@ JSONParser_logger = logging.getLogger('memeMaker')
 namesList = []
 substring_list = [".jpg","pic.twitter","imgur"]
 def parseMemes(filename):
-    with open('memeData1218To1219') as data_file:
+    with open(filename) as data_file:
         data = json.load(data_file)
         JSONParser_logger.info('loaded data file ' + str(data_file))
     picURLs = []

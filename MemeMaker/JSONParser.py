@@ -28,6 +28,7 @@ def parseMemes(filename):
             if int(dataPoint["retweets"])> 20:
                 s = str(dataPoint["text"])
                 if(detect(s) == 'en'):
+                    #if not re.search('[?-@-#]',s):
                     memeWorthy = len(s.split())  # splitting on whitespace
                     if memeWorthy < 25 and memeWorthy > 4: #does order impose performance cost?
                         if any(substring in s for substring in substring_list): #https://stackoverflow.com/questions/8122079/python-how-to-check-a-string-for-substrings-from-a-list

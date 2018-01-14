@@ -36,7 +36,7 @@ picURLs = []
 
 logger.info('populating meme tweets and pic URL lists')
 tweetsToMeme, picURLs = parseMemes(filename)
-logger.info('lists successfully populate')
+logger.info('lists successfully populated')
 logger.info('making memes')
 makeMemes(tweetsToMeme, picURLs)
 logger.info('Execution completed at ' + str(datetime.datetime.now()))

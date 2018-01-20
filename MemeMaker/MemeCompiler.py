@@ -1,13 +1,10 @@
-#All the things related to meme generation, might have to split this up
-#If I'm going to be fucking networking I need a logger service too
+#All the things related to meme generation
 import requests
 from bs4 import BeautifulSoup
 import webbrowser
 import urllib.request
 import re
 import logging
-
-#don't parse html with REGEX! https://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags
 
 MemeCompiler_logger = logging.getLogger('memeMaker')
 
@@ -23,6 +20,31 @@ def picURLParser(URL):
     link = picData.find('img')
     URL = link.attrs['src']
     return URL
+
+#I should learn regex
+#Removes nasty chars from tweet text. These either cause problems with URLs or look weird in memes
+def removeChars(topString, bottomString):
+    if '_' in topString:
+       topString = topString.replace("_", " ")
+    if '_' in bottomString:
+        bottomString = bottomString.replace("_", " ")
+    if '@' in topString:
+        topString = topString.replace("@", " ")
+    if '@' in bottomString:
+        bottomString = bottomString.replace("@", " ")
+    if '-' in topString:
+        topString = topString.replace("-", " ")
+    if '-' in bottomString:
+        bottomString = bottomString.replace("-", " ")
+    if '#' in topString:
+        topString = topString.replace("#", " ")
+    if '#' in bottomString:
+        bottomString = bottomString.replace("#", " ")
+    if '?' in topString:
+        topString = topString.replace("?", " ")
+    if '?' in bottomString:
+        bottomString = bottomString.replace("?", " ")    
+    return topString,bottomString
 
 #Going to need a method that takes in a top string, bottom string, and image source, and passes them off to the meme maker. Might save
 #this image programatically, no clue how to do that
@@ -43,12 +65,17 @@ def memeMaker(topString,bottomString,URL):
         #Removing tweets which are just images, likely superflorus after changes to JSONParser, test this
         if (topString == "" or bottomString == ""):
             return
+
+        #Remove characters unsuited for memes
+        topString,bottomString = removeChars(topString,bottomString)
+
         #Twitter picture URLs just take us to the tweet container for that picture. If we get there we need to parse the actual picture out of the tweet, which is handled by the URL parser
         if(parseMeBB == "pic"):
             nonTwitterURL = picURLParser(URL)
             memeURL = "https://memegen.link/custom/" +topString + "/" + bottomString + ".jpg?alt" "=" + nonTwitterURL #working, formatting issues abound
         else:
             memeURL = "https://memegen.link/custom/" + topString + "/" + bottomString + ".jpg?alt" "=" + URL
+
         memeURL = memeURL.replace('#',"") # Hashtags will cause link to fail, may be able to handle this in format text. Arguable that tweets containing hashtags aren't suitable for memes anyway
         webbrowser.open_new(memeURL) #If your OS loads Edge as the default browser you need to take a break and rethink your life
         filename = memeURL.split('/')[-1]
@@ -93,3 +120,4 @@ def makeMemes(tweets, PicURLs):
             i = i +1 #python why
     except Exception as e:
         MemeCompiler_logger.exception("Memecompiler hit an unexpected exception at tweet " + i )
+

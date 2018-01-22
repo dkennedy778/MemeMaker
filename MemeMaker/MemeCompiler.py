@@ -8,20 +8,18 @@ import logging
 
 MemeCompiler_logger = logging.getLogger('memeMaker')
 
-#Going to need a method to follow a pic.twitter URL, find the actual image source, and return it to the user
+#Follows a tweet URL and parses out its corresponding image's source URL 
 def picURLParser(URL):
     page = requests.get("http://" +URL)
     if(page.status_code != 200):
         MemeCompiler_logger.warning('page failed to load for URL ' + URL)
     soup = BeautifulSoup(page.content, 'html.parser')
-    # ho boy I sure do hope twitter's image embedding is standardized
     pageData = soup.find(id="permalink-overlay")
-    picData = pageData.find(class_="AdaptiveMediaOuterContainer")
+    picData = pageData.find(class_="AdaptiveMediaOuterContainer") 
     link = picData.find('img')
     URL = link.attrs['src']
     return URL
 
-#I should learn regex
 #Removes nasty chars from tweet text. These either cause problems with URLs or look weird in memes
 def removeChars(topString, bottomString):
     if '_' in topString:
@@ -46,11 +44,8 @@ def removeChars(topString, bottomString):
         bottomString = bottomString.replace("?", " ")    
     return topString,bottomString
 
-#Going to need a method that takes in a top string, bottom string, and image source, and passes them off to the meme maker. Might save
-#this image programatically, no clue how to do that
-
 #Documented issues with memeMaker
-#1. MemeGen really doesn't play well with chinese characters or emojis. Generally just won't display them, arguable that these should just be excluded from the pool.
+#1. MemeGen really doesn't play well with chinese characters. Generally just won't display them, these shouldn't be getting past the language parser anyway
 
 #2. 'https://memegen.link/custom/"Can you hear our song?" Some drawing based /off Calamari Inkantation, I hope you like it! /j8ZMAozgDd .jpg?alt=https://pbs.twimg.com/media/DRXXxEmX0AECbnB.jpg'
 # This string realllyyy messed the parser up, tried to create a new meme for every single word in the sentence after song. Removing the question mark fixed it, seems like it functions as an escape character or something
@@ -60,9 +55,7 @@ def removeChars(topString, bottomString):
 
 def memeMaker(topString,bottomString,URL):
     try:
-        # going to start by opening firefox, but eventually I want all this automated
         parseMeBB = URL[0] + URL[1] + URL[2]
-        #Removing tweets which are just images, likely superflorus after changes to JSONParser, test this
         if (topString == "" or bottomString == ""):
             return
 
@@ -88,27 +81,25 @@ def memeMaker(topString,bottomString,URL):
     except Exception as e:
         MemeCompiler_logger.exception("Failed to create and open memePage for " + URL)
 
-#Method to split text into top and bottom meme? I don't know if its even worth the effort, maybe just for fun
-def textSplitter(text):
+#Takes a meme's text and splits it into top and bottom portions
     stringList = text.split()
     length = len(stringList)
-    #I'm sure there's a better way to do this but this'll work. This way we know we're always getting whole words
+    #Split the text in two equal halves 
     firstString = ""
     secondString = ""
-    #round up or down?
     for x in range(0, int(length/2)):
         firstString += stringList[x] + " "
     for x in range(int(length/2), length):
         secondString += stringList[x] + " "
     splitString = [firstString,secondString]
     return splitString
-#Need to strip text of anything and everything wacky, going to be a pain in the ass
+#Stripping text of malforming strings/link addresses. This method will be unified with removeChars
 def formatText(text):
     returnText = re.sub(r"http\S+", "", text)
     lazyBoi = re.sub(r"pic.twitter.com","",returnText)
     #re.sub(r'\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*(?:(?:\/[^\s/]*))*', '', text)
     return lazyBoi
-#Main test stuff, this should be on top come on python why you gotta enforce ordering
+#Main test loop
 def makeMemes(tweets, PicURLs):
     try:
         i = 0

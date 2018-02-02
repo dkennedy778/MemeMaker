@@ -75,7 +75,7 @@ def memeMaker(topString,bottomString,URL):
         req = urllib.request.Request(memeURL, headers={'User-Agent': "Magic Browser"})
         img = urllib.request.urlopen(req)
         with open(filename, 'wb') as file:
-            file.write(img.read())-
+            file.write(img.read())
         #webbrowser.close()
     except Exception as e:
         MemeCompiler_logger.exception("Failed to create and open memePage for " + URL)
